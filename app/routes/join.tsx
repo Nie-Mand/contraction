@@ -1,6 +1,13 @@
 // Create account : title, bio, avatar, wallet
 
-import { Input, validators, useForm, Form, ConnectWalletInput } from '~/core'
+import {
+  Input,
+  validators,
+  useForm,
+  Form,
+  ConnectWalletInput,
+  FileInput,
+} from '~/core'
 
 export default function Join() {
   const form = useForm()
@@ -11,7 +18,8 @@ export default function Join() {
 
   return (
     <div className="flex items-center flex-1">
-      <div className="bg-indigo-500 h-full-no-nav w-80"></div>
+      <div className="bg-gradient-to-b from-red-600 to-red-400 w-80 h-screen fixed top-0 -z-10"></div>
+      <div className="w-80"></div>
 
       <div className="flex-1 grid content-center ">
         <Form onSubmit={onSubmit} form={form}>
@@ -30,7 +38,17 @@ export default function Join() {
                 validations={[validators.required, validators.notJustSpaces]}
               />
 
-              <ConnectWalletInput name="walletAddress" />
+              <FileInput
+                name="avatar"
+                label="Avatar"
+                validations={[validators.required, validators.notJustSpaces]}
+              />
+
+              <ConnectWalletInput
+                label="Connect your wallet"
+                name="walletAddress"
+                validations={[validators.required, validators.notJustSpaces]}
+              />
 
               <div className="flex justify-end">
                 <button className="button">Join</button>

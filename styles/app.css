@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 @layer components {
-  .container {
+  .ctr {
     @apply px-10 md:px-20;
   }
 

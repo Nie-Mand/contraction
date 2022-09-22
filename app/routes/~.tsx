@@ -1,6 +1,11 @@
+import { useState } from 'react'
+import { DocCard, UnsignedDocCard } from '~/core/Doc'
+
 export default function Profile() {
+  const [tab, setTab] = useState<'unsigned' | 'mine'>('mine')
+
   return (
-    <div className="container">
+    <div className="ctr">
       <div className="relative py-10">
         <div className="bg-slate-100 h-60 w-full rounded-xl"></div>
         <img
@@ -13,11 +18,39 @@ export default function Profile() {
         <h1 className="font-extrabold text-xl">Lorem Ipsum</h1>
         <h2>Description Description Description Description</h2>
       </div>
-      <div className="py-10 grid grid-cols-4">
-        <div className="rounded-xl border p-10">
-          <h1 className="font-extrabold text-lg">Label of the Doc</h1>
-        </div>
+
+      <div className="flex items-center py-6 text-sm space-x-5 font-bold">
+        <button
+          onClick={() => setTab('mine')}
+          className={`p-4 ${
+            tab === 'mine' ? 'bg-slate-300' : 'bg-slate-100'
+          } hover:bg-slate-300 duration-200 rounded-md`}
+        >
+          My Documents
+        </button>
+        <button
+          onClick={() => setTab('unsigned')}
+          className={`p-4 ${
+            tab === 'unsigned' ? 'bg-slate-300' : 'bg-slate-100'
+          } hover:bg-slate-300 duration-200 rounded-md`}
+        >
+          Unsigned Documents
+        </button>
       </div>
+
+      {tab === 'unsigned' ? (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <UnsignedDocCard />
+          <UnsignedDocCard />
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <DocCard />
+          <DocCard />
+          <DocCard />
+          <DocCard />
+        </div>
+      )}
     </div>
   )
 }
