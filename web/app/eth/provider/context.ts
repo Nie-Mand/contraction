@@ -11,6 +11,7 @@ interface IWeb3Context {
   blockNumber: number | null
   network: string
   symbol: string
+  connectToMetamask: () => void
 }
 
 const Web3Context = createContext<IWeb3Context>({
@@ -23,6 +24,7 @@ const Web3Context = createContext<IWeb3Context>({
   blockNumber: null,
   network: '',
   symbol: '',
+  connectToMetamask: () => {},
 })
 
 export const useWeb3Context = () => useContext(Web3Context)

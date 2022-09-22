@@ -1,7 +1,8 @@
 import { useField, Formiz, type FieldProps } from '@formiz/core'
-import { type HTMLInputTypeAttribute, useMemo } from 'react'
+import { type HTMLInputTypeAttribute, useMemo, useEffect } from 'react'
 import { required as requiredValidator } from './validators'
 import { AiOutlineCloudUpload as UploadIcon } from 'react-icons/ai'
+import { useWallet } from '~/eth'
 export * as validators from './validators'
 export { useForm } from '@formiz/core'
 
@@ -30,7 +31,7 @@ export function FileInput(props: Props) {
           {props.label} {!!required && ' *'}
         </span>
         <div
-          className={`border rounded p-4 text-xs focus-within:ring focus-within:ring-primary focus-within:ring-opacity-50 duration-200 focus:outline-none flex-1 disabled:opacity-40 font-normal`}
+          className={`cursor-pointer border rounded p-4 text-xs focus-within:ring focus-within:ring-primary focus-within:ring-opacity-50 duration-200 focus:outline-none flex-1 disabled:opacity-40 font-normal`}
         >
           {value ? (
             'Uploaded'
@@ -59,6 +60,7 @@ export function FileInput(props: Props) {
   )
 }
 export function ConnectWalletInput(props: Props) {
+  const { connectToMetamask, account, error: walletError } = useWallet()
   const { errorMessage, isValid, setValue, value, id, isSubmitted } =
     useField(props)
 
@@ -68,19 +70,28 @@ export function ConnectWalletInput(props: Props) {
     [props.validations]
   )
 
+  useEffect(() => {
+    if (account) {
+      setValue(account)
+    }
+  }, [setValue, account])
+
   return (
     <div className="grid gap-2">
       <label htmlFor="" className="font-bold capitalize text-sm">
         {props.label} {!!required && ' *'}
       </label>
       <button
+        onClick={connectToMetamask}
         type="button"
         className="button bg-metamask-light hover:bg-metamask-less-light focus:ring-metamask-white"
       >
-        Connect Wallet
+        {value ? `Connected to ${value}` : 'Connect Wallet'}
       </button>
-      {error ? (
-        <span className="text-red-500 text-xs">{errorMessage}</span>
+      {error || walletError ? (
+        <span className="text-red-500 text-xs">
+          {walletError ? walletError : errorMessage}
+        </span>
       ) : null}
     </div>
   )

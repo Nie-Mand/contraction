@@ -1,8 +1,20 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { Loading } from '~/core'
 import { DocCard, UnsignedDocCard } from '~/core/Doc'
+import { useGetMyData } from '~/services/users'
 
 export default function Profile() {
-  const [tab, setTab] = useState<'unsigned' | 'mine'>('mine')
+  const [tab, setTab] = useState<'unsigned' | 'mine' | 'created'>('mine')
+  const [data, loading, error] = useGetMyData()
+
+  useEffect(() => {}, [])
+
+  if (loading) return <Loading />
+  if (error) return <span>{error}</span>
+
+  console.log({
+    data,
+  })
 
   return (
     <div className="ctr">
@@ -20,6 +32,14 @@ export default function Profile() {
       </div>
 
       <div className="flex items-center py-6 text-sm space-x-5 font-bold">
+        <button
+          onClick={() => setTab('created')}
+          className={`p-4 ${
+            tab === 'created' ? 'bg-slate-300' : 'bg-slate-100'
+          } hover:bg-slate-300 duration-200 rounded-md`}
+        >
+          Created Documents
+        </button>
         <button
           onClick={() => setTab('mine')}
           className={`p-4 ${

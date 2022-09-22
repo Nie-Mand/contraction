@@ -1,8 +1,16 @@
 import { useWeb3Context } from './context'
 
 export const useWallet = () => {
-  const { account, balance, blockNumber, error, loading, network, symbol } =
-    useWeb3Context()
+  const {
+    account,
+    balance,
+    blockNumber,
+    error,
+    loading,
+    network,
+    symbol,
+    connectToMetamask,
+  } = useWeb3Context()
   return {
     account,
     balance,
@@ -11,5 +19,6 @@ export const useWallet = () => {
     loading,
     network,
     symbol,
+    connectToMetamask,
   }
 }

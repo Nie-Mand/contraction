@@ -1,5 +1,7 @@
 // Create account : title, bio, avatar, wallet
 
+import { useNavigate } from '@remix-run/react'
+import { useState } from 'react'
 import {
   Input,
   validators,
@@ -8,12 +10,31 @@ import {
   ConnectWalletInput,
   FileInput,
 } from '~/core'
+import { upload } from '~/services'
+import { useCreateUser } from '~/services/users'
 
 export default function Join() {
   const form = useForm()
+  const [loading, setLoading] = useState(false)
+  const [create, _loading, error, hash] = useCreateUser()
+  const goto = useNavigate()
 
-  function onSubmit(data: any) {
-    console.log(data)
+  async function onSubmit(data: any) {
+    setLoading(true)
+    const cid = await upload(data.avatar, 'avatar')
+    console.log({
+      ...data,
+      cid,
+    })
+    const { fullname, bio } = data
+
+    await create({
+      fullname,
+      bio,
+      avatar: cid,
+    })
+    setLoading(false)
+    goto('/')
   }
 
   return (
@@ -41,7 +62,7 @@ export default function Join() {
               <FileInput
                 name="avatar"
                 label="Avatar"
-                validations={[validators.required, validators.notJustSpaces]}
+                validations={[validators.required]}
               />
 
               <ConnectWalletInput
@@ -51,7 +72,12 @@ export default function Join() {
               />
 
               <div className="flex justify-end">
-                <button className="button">Join</button>
+                <button
+                  className="button"
+                  disabled={loading || (form.isSubmitted && !form.isValid)}
+                >
+                  {loading ? 'Submitted' : 'Join'}
+                </button>
               </div>
             </div>
           </div>

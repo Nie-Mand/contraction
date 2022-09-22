@@ -10,6 +10,8 @@ import {
 import styles from './styles/app.css'
 import { Navbar } from '~/core/navbar'
 import { Toaster } from 'react-hot-toast'
+import { Provider } from '~/eth'
+
 export function links() {
   return [{ rel: 'stylesheet', href: styles }]
 }
@@ -28,9 +30,11 @@ export default function App() {
         <Links />
       </head>
       <body className="min-h-screen flex flex-col">
-        <Toaster position="bottom-right" />
-        <Navbar />
-        <Outlet />
+        <Provider>
+          <Toaster position="bottom-right" />
+          <Navbar />
+          <Outlet />
+        </Provider>
         <ScrollRestoration />
         <Scripts />
         <LiveReload />

@@ -72,10 +72,6 @@ export const useWalletConnect = () => {
   }, [chain])
 
   useEffect(() => {
-    connectToMetamask()
-  }, [])
-
-  useEffect(() => {
     if (web3) {
       loader()
       handleNetworkChange()
@@ -93,5 +89,6 @@ export const useWalletConnect = () => {
     blockNumber,
     network,
     symbol,
+    connectToMetamask,
   }
 }

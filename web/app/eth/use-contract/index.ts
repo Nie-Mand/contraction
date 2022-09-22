@@ -18,7 +18,7 @@ export function useTx<F>(func: (...args: any[]) => Promise<F>) {
           if (tx.hash) {
             setHash(tx.hash)
           }
-          tx.wait!().then(_tx => {
+          tx.wait!().then((_tx: any) => {
             setLoading(false)
           })
         })
