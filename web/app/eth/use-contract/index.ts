@@ -7,6 +7,7 @@ export function useTx<F>(func: (...args: any[]) => Promise<F>) {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [hash, setHash] = useState<string | null>(null)
+  const [done, setDone] = useState<boolean>(false)
 
   const call = useCallback(
     async (...args: any[]) => {
@@ -21,6 +22,7 @@ export function useTx<F>(func: (...args: any[]) => Promise<F>) {
           tx.wait!().then((_tx: any) => {
             setLoading(false)
           })
+          setDone(true)
         })
         .catch((e: any) => {
           setError(null)
@@ -40,33 +42,44 @@ export function useTx<F>(func: (...args: any[]) => Promise<F>) {
     [func]
   )
 
-  return [call, loading, error, hash] as const
+  return [call, loading, error, hash, done] as const
 }
 
 export function useReader<F>(func: (...args: any[]) => Promise<F>) {
+  const [data, setData] = useState<any>(null)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
   const call = useCallback(
     async (...args: any[]) => {
       if (!func) return null
+      console.log('useReader')
       setLoading(true)
-      const v = await func(...args).catch((e: any) => {
-        setError(null)
-        setLoading(false)
-        console.log(e)
-        if (e.error?.data?.message && e.error.data.message.indexOf(':') !== -1)
-          setError(e.error.data.message.split(':')[1].trim())
-        else setError(e.message)
-        return null
-      })
+      await func(...args)
+        .then(v => {
+          setData(v)
+          setLoading(false)
+        })
+        .catch((e: any) => {
+          setError(null)
+          setLoading(false)
+          console.log(e)
+          console.log('data', e.errorName)
 
-      return v
+          if (e.errorName === 'UserAlreadyExists') {
+            setError('User already exists')
+          } else if (e.errorName === 'UserDoesNotExist') {
+            setError('User does not exist')
+          } else {
+            setError(e.message)
+          }
+          return null
+        })
     },
     [func]
   )
 
-  return [call, loading, error] as const
+  return [call, data, loading, error] as const
 }
 
 export function useContract(address: string, abi: ethers.ContractInterface) {

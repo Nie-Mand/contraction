@@ -12,6 +12,7 @@ interface IWeb3Context {
   network: string
   symbol: string
   connectToMetamask: () => void
+  disconnect: () => void
 }
 
 const Web3Context = createContext<IWeb3Context>({
@@ -25,6 +26,7 @@ const Web3Context = createContext<IWeb3Context>({
   network: '',
   symbol: '',
   connectToMetamask: () => {},
+  disconnect: () => {},
 })
 
 export const useWeb3Context = () => useContext(Web3Context)

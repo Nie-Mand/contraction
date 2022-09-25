@@ -10,6 +10,7 @@ export const useWallet = () => {
     network,
     symbol,
     connectToMetamask,
+    disconnect,
   } = useWeb3Context()
   return {
     account,
@@ -20,5 +21,6 @@ export const useWallet = () => {
     network,
     symbol,
     connectToMetamask,
+    disconnect,
   }
 }

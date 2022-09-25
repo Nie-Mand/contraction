@@ -1,7 +1,7 @@
 // Create account : title, bio, avatar, wallet
 
 import { useNavigate } from '@remix-run/react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Input,
   validators,
@@ -13,34 +13,47 @@ import {
 import { upload } from '~/services'
 import { useCreateUser } from '~/services/users'
 
+function limit(str: string) {
+  return str.slice(0, 100)
+}
+
 export default function Join() {
   const form = useForm()
   const [loading, setLoading] = useState(false)
-  const [create, _loading, error, hash] = useCreateUser()
+  const [status, setStatus] = useState('Join')
+  const [submit, _loading, error, hash, done] = useCreateUser()
   const goto = useNavigate()
+
+  console.log({
+    _loading,
+    error,
+    hash,
+  })
+
+  useEffect(() => {
+    if (done) {
+      goto('/login')
+    }
+  }, [done])
 
   async function onSubmit(data: any) {
     setLoading(true)
+    setStatus('Uploading...')
     const cid = await upload(data.avatar, 'avatar')
-    console.log({
-      ...data,
-      cid,
-    })
+
     const { fullname, bio } = data
 
-    await create({
-      fullname,
-      bio,
-      avatar: cid,
-    })
+    setStatus('Creating Account...')
+    await submit(fullname, bio, cid + '/' + data.avatar.name)
+
+    setStatus('Created')
     setLoading(false)
-    goto('/')
   }
 
   return (
     <div className="flex items-center flex-1">
-      <div className="bg-gradient-to-b from-red-600 to-red-400 w-80 h-screen fixed top-0 -z-10"></div>
-      <div className="w-80"></div>
+      <div className="bg-gradient-to-b from-red-600 to-red-400 w-4 md:w-80 h-screen fixed top-0 -z-10"></div>
+      <div className="w-4 md:w-80"></div>
 
       <div className="flex-1 grid content-center ">
         <Form onSubmit={onSubmit} form={form}>
@@ -71,12 +84,16 @@ export default function Join() {
                 validations={[validators.required, validators.notJustSpaces]}
               />
 
+              {error && (
+                <div className="text-red-500 text-sm">{limit(error)}</div>
+              )}
+
               <div className="flex justify-end">
                 <button
                   className="button"
                   disabled={loading || (form.isSubmitted && !form.isValid)}
                 >
-                  {loading ? 'Submitted' : 'Join'}
+                  {status}
                 </button>
               </div>
             </div>

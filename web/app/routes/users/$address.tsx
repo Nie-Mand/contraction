@@ -1,8 +1,15 @@
 import { useParams } from '@remix-run/react'
+import { Loading, Error } from '~/core'
 import { DocCard } from '~/core/Doc'
+import { useGetSomeonesData } from '~/services/users'
 
 export default function Profile() {
-  const { address } = useParams()
+  const { data, loading, error } = useGetSomeonesData()
+  console.log(data, loading, error)
+
+  if (loading) return <Loading />
+  if (error) return <Error>{error}</Error>
+
   return (
     <div className="ctr">
       <div className="relative py-10">
@@ -14,7 +21,7 @@ export default function Profile() {
         />
       </div>
       <div className="text-center pt-8">
-        <h1 className="font-extrabold text-xl">Lorem Ipsum: {address}</h1>
+        <h1 className="font-extrabold text-xl">Lorem Ipsum: </h1>
         <h2>Description Description Description Description</h2>
       </div>
       <div className="py-10 grid grid-cols-1 lg:grid-cols-3 gap-4">

@@ -1,34 +1,44 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Loading } from '~/core'
 import { DocCard, UnsignedDocCard } from '~/core/Doc'
 import { useGetMyData } from '~/services/users'
+import { useRedirectIfNotLoggedIn } from '~/services/auth'
+import { linkOf } from '~/services/upload'
 
 export default function Profile() {
   const [tab, setTab] = useState<'unsigned' | 'mine' | 'created'>('mine')
-  const [data, loading, error] = useGetMyData()
+  const { data, loading, error } = useGetMyData()
 
-  useEffect(() => {}, [])
-
-  if (loading) return <Loading />
-  if (error) return <span>{error}</span>
-
+  useRedirectIfNotLoggedIn()
   console.log({
     data,
+    loading,
+    error,
   })
+
+  // useMemo(() => {
+  //   if (data && data.length === 3) {
+  //     return {
+  //       fullname
+  //     }
+  //   }
+  // }, [data])
+  if (loading) return <Loading />
+  if (error) return <span>{error}</span>
 
   return (
     <div className="ctr">
       <div className="relative py-10">
         <div className="bg-slate-100 h-60 w-full rounded-xl"></div>
         <img
-          src="https://picsum.photos/200"
+          src={linkOf(data ? data?.avatar : '/')}
           alt="logo"
-          className="absolute top-1/2 right-1/2 translate-x-1/2 rounded-full w-40 h-40 mx-auto ring-8 ring-primary ring-offset-4"
+          className="object-cover absolute top-1/2 right-1/2 translate-x-1/2 rounded-full w-40 h-40 mx-auto ring-8 ring-primary ring-offset-4"
         />
       </div>
       <div className="text-center pt-8">
-        <h1 className="font-extrabold text-xl">Lorem Ipsum</h1>
-        <h2>Description Description Description Description</h2>
+        <h1 className="font-extrabold text-xl">{data?.fullname}</h1>
+        <h2>{data?.bio}</h2>
       </div>
 
       <div className="flex items-center py-6 text-sm space-x-5 font-bold">

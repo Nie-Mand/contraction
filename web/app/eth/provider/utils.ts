@@ -6,6 +6,8 @@ export function getChainFromChainId(chainId: number | null) {
       return 'Rinkeby Testnet (Etherium)'
     case 80001:
       return 'Mumbai Testnet (Polygon)'
+    case 31337:
+      return 'Localhost (Hardhat)'
     default:
       return 'UNSUPPORTED NETWORK'
   }
@@ -19,6 +21,9 @@ export function getSymbolFromChainId(chainId: number | null) {
       return 'ETH'
     case 80001:
       return 'MATIC'
+    case 31337:
+      return 'ETH'
+
     default:
       return '$$$'
   }
@@ -29,6 +34,7 @@ export function supportedChain(chainId: number) {
     case 4:
     case 3:
     case 80001:
+    case 31337:
       return true
     default:
       return false

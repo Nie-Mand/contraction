@@ -11,6 +11,7 @@ import styles from './styles/app.css'
 import { Navbar } from '~/core/navbar'
 import { Toaster } from 'react-hot-toast'
 import { Provider } from '~/eth'
+import { AuthProvider } from '~/services/auth'
 
 export function links() {
   return [{ rel: 'stylesheet', href: styles }]
@@ -31,9 +32,11 @@ export default function App() {
       </head>
       <body className="min-h-screen flex flex-col">
         <Provider>
-          <Toaster position="bottom-right" />
-          <Navbar />
-          <Outlet />
+          <AuthProvider>
+            <Toaster position="bottom-right" />
+            <Navbar />
+            <Outlet />
+          </AuthProvider>
         </Provider>
         <ScrollRestoration />
         <Scripts />

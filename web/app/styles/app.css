@@ -701,8 +701,8 @@ video {
   width: 3.5rem;
 }
 
-.w-80 {
-  width: 20rem;
+.w-4 {
+  width: 1rem;
 }
 
 .w-full {
@@ -711,6 +711,10 @@ video {
 
 .w-40 {
   width: 10rem;
+}
+
+.w-80 {
+  width: 20rem;
 }
 
 .max-w-xl {
@@ -856,6 +860,11 @@ video {
 
 .to-red-400 {
   --tw-gradient-to: #f87171;
+}
+
+.object-cover {
+  -o-object-fit: cover;
+     object-fit: cover;
 }
 
 .p-6 {
@@ -1103,6 +1112,10 @@ input[type='number']::-webkit-inner-spin-button,
 }
 
 @media (min-width: 768px) {
+  .md\:w-80 {
+    width: 20rem;
+  }
+
   .md\:p-10 {
     padding: 2.5rem;
   }

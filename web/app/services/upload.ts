@@ -12,7 +12,7 @@ export async function upload(file: File, name: string) {
   return cid
 }
 
-export function linkOf(cid: string) {
-  return `https://${cid}.ipfs.w3s.link`
-  
+export function linkOf(avatar: string) {
+  const [cid, name] = avatar.split('/')
+  return `https://${cid}.ipfs.w3s.link/${name}`
 }

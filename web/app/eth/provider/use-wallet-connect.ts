@@ -12,6 +12,18 @@ export const useWalletConnect = () => {
   const [error, setError] = useState<string | null>(null)
   const [balance, setBalance] = useState<number | null>(null)
 
+  console.log('loading', loading)
+
+  function disconnect() {
+    setWeb3(null)
+    setAccount(null)
+    setSigner(null)
+    setChain(null)
+    setError(null)
+    setBalance(null)
+    window.ethereum?.removeAllListeners()
+  }
+
   function connectToMetamask() {
     setLoading(true)
     if (typeof window.ethereum !== 'undefined') {
@@ -26,17 +38,15 @@ export const useWalletConnect = () => {
   }
 
   async function loader(_account?: string) {
-    setLoading(true)
     const network = await web3!.getNetwork()
     const chainId = network.chainId
 
+    setLoading(true)
     if (!utils.supportedChain(chainId)) {
       setError(`Chain with ChainID: ${chainId} is not supported`)
-      setLoading(false)
     } else {
       setError(null)
       setChain(chainId)
-      setBlockNumber(await web3!.getBlockNumber())
       const [account] = _account
         ? [_account]
         : await web3!.send('eth_requestAccounts', [])
@@ -44,8 +54,8 @@ export const useWalletConnect = () => {
       setSigner(web3!.getSigner())
       const _balance = await web3!.getBalance(account)
       setBalance(Number(ethers.utils.formatEther(_balance)))
-      setLoading(false)
     }
+    setLoading(false)
   }
 
   function handleNetworkChange() {
@@ -72,6 +82,8 @@ export const useWalletConnect = () => {
   }, [chain])
 
   useEffect(() => {
+    console.log('exec')
+
     if (web3) {
       loader()
       handleNetworkChange()
@@ -90,5 +102,6 @@ export const useWalletConnect = () => {
     network,
     symbol,
     connectToMetamask,
+    disconnect,
   }
 }

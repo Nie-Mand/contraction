@@ -2,25 +2,111 @@ import { useWallet, useContract, ethers, useTx, useReader } from '~/eth'
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import BN from 'bn.js'
 import abi from './abi.json'
+import { useAuth } from './auth'
+import { useParams } from '@remix-run/react'
 
 export const useCreateUser = () => {
   const { contract } = useContract(
-    '0x5FbDB2315678afecb367f032d93F642f64180aa3',
+    '0x4a55e6dD9D38dD0119a436Fb409Ed717dA85FcC2',
     abi
   )
-  const createUser = useTx(contract?.createUser)
+
+  const createUser = useTx(contract?.register)
   return createUser
 }
 
-export const useGetMyData = () => {
+export const useLogin = () => {
+  const { connectToMetamask } = useWallet()
+  const { onLoggedIn } = useAuth()
+  useEffect(() => {
+    connectToMetamask()
+  }, [])
+
   const { contract } = useContract(
-    '0x5FbDB2315678afecb367f032d93F642f64180aa3',
+    '0x4a55e6dD9D38dD0119a436Fb409Ed717dA85FcC2',
     abi
   )
-  const data = useReader(contract?.getMyData)
-  return data
+  const [submit, data, loading, error] = useReader(contract?.getMyData)
+
+  useEffect(() => {
+    if (data) onLoggedIn(data)
+  }, [data, onLoggedIn])
+
+  return {
+    submit,
+    data,
+    loading,
+    error,
+  }
 }
 
+export const useGetMyData = () => {
+  const { connectToMetamask } = useWallet()
+  const { onLoggedIn } = useAuth()
+  useEffect(() => {
+    connectToMetamask()
+  }, [])
+
+  const { contract } = useContract(
+    '0x5fbdb2315678afecb367f032d93f642f64180aa3',
+    abi
+  )
+  const [call, data, loading, error] = useReader(contract?.getMyData)
+
+  useEffect(() => {
+    call()
+  }, [call])
+
+  useEffect(() => {
+    if (data) onLoggedIn(data)
+  }, [data, onLoggedIn])
+
+  return {
+    data,
+    loading,
+    error,
+  }
+}
+
+export const useGetSomeonesData = () => {
+  const { address } = useParams()
+  const { connectToMetamask } = useWallet()
+  const { onLoggedIn } = useAuth()
+  useEffect(() => {
+    connectToMetamask()
+  }, [])
+
+  const { contract } = useContract(
+    '0x4a55e6dD9D38dD0119a436Fb409Ed717dA85FcC2',
+    abi
+  )
+  const [call, data, loading, error] = useReader(contract?.getSomeonesData)
+
+  useEffect(() => {
+    if (address) call(address)
+  }, [call, address])
+
+  useEffect(() => {
+    if (data) onLoggedIn(data)
+  }, [data, onLoggedIn])
+
+  return {
+    data,
+    loading,
+    error,
+  }
+}
+
+export const useLogout = () => {
+  const { onLoggedOut } = useAuth()
+  const { disconnect } = useWallet()
+  const logout = useCallback(() => {
+    disconnect()
+    onLoggedOut()
+  }, [disconnect, onLoggedOut])
+
+  return logout
+}
 // export interface CampaignoObject {
 //   delay: number
 //   period: number
